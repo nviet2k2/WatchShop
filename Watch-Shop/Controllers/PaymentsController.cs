@@ -31,7 +31,7 @@ namespace Watch_Shop.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exceptions or log errors as needed
+                
                 return BadRequest("An error occurred while processing the payment.");
             }
         }
@@ -41,7 +41,7 @@ namespace Watch_Shop.Controllers
         public IActionResult PaymentCallback()
         {
             var response = _payPalService.PaymentExecute(Request.Query);
-            return Ok(response);  // This line replaces return Json(response);
+            return Ok(response);  
         }
 
     }

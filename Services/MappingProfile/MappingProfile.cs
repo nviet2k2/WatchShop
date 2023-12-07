@@ -22,6 +22,7 @@ namespace Services.MappingProfile
             CreateMap<ProductModel, CreateProductDTO>().ReverseMap();
             CreateMap<ReceiptModel, ReceiptDTO>().ReverseMap();
             CreateMap<ReceiptModel, CreateReceiptDTO>().ReverseMap();
+            CreateMap<UserModel, UnlockUserDTO>().ReverseMap();
             CreateMap<ReceiptDetailModel, ReceiptDetailDTO>().ReverseMap();
             CreateMap<ReceiptDetailModel, CreateReceiptDetailDTO>().ReverseMap();
             CreateMap<UserModel, ResetPasswordDTO>().ReverseMap();

@@ -21,6 +21,11 @@ namespace Services.DTOs
         public int RoleId { get; set; }
        
     }
+    public class UnlockUserDTO
+    {
+        public int Id { get; set; }
+        public bool IsLockedout { get; set; }
+    }
     public class CreateUserDTO
     {
         public int Id { get; set; }

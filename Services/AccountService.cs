@@ -39,10 +39,11 @@ namespace Services
         Task<int> Delete(int id);
         Task<int[]> DeleteMultiple(int[] ids);
         Task<bool> ForgotPasswordAsync(string email);
+        Task<UnlockUserDTO> UnlockAaccount(UnlockUserDTO payload);
     }
 }
-    public class UserService : IUserService
-    {
+public class UserService : IUserService
+{
 
     private readonly IEmailService _mailService;
     private readonly ITokenService _tokenService;
@@ -53,17 +54,17 @@ namespace Services
     private readonly ICustomerRepository _customerRepository;
     private readonly IMapper _mapper;
 
-    public UserService(IUserRepository userRepository, IMapper mapper,IRoleRepository roleRepository,ICustomerRepository customerRepository, IConfiguration configuration, ITokenService tokenService, IEmailService mailService)
-        {
-         _mapper = mapper;
-            _customerRepository = customerRepository;
-            _userRepository = userRepository;
+    public UserService(IUserRepository userRepository, IMapper mapper, IRoleRepository roleRepository, ICustomerRepository customerRepository, IConfiguration configuration, ITokenService tokenService, IEmailService mailService)
+    {
+        _mapper = mapper;
+        _customerRepository = customerRepository;
+        _userRepository = userRepository;
         _roleRepository = roleRepository;
-            _configuration = configuration;
-            _verificationCodes = new Dictionary<string, string>();
-            _tokenService = tokenService;
+        _configuration = configuration;
+        _verificationCodes = new Dictionary<string, string>();
+        _tokenService = tokenService;
         _mailService = mailService;
-        }
+    }
     public async Task<UserDTO> GetById(int id)
     {
         var data = await _userRepository.FirstOrDefaultAsync(x => x.Id == id);
@@ -120,8 +121,8 @@ namespace Services
 
     public async Task<bool> ForgotPasswordAsync(string email)
     {
-      
-       
+
+
 
         //var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = token }, protocol: HttpContext.Request.Scheme);
@@ -130,6 +131,19 @@ namespace Services
         //    $"Please reset your password by clicking here: {callbackUrl}");
 
         return true;
+    }
+    public async Task<UnlockUserDTO> UnlockAaccount(UnlockUserDTO payload)
+    {
+
+        var data = await _userRepository.FirstOrDefaultAsync(x => x.Id == payload.Id);
+        if (data == null)
+        {
+            throw new Exception("Item not found");
+        }
+        data.IsLockedout = payload.IsLockedout;
+        _userRepository.Update(data);
+        await _userRepository.SaveChanges();
+        return _mapper.Map<UnlockUserDTO>(data);
     }
     public async Task<string> ResetPasswordAsync(string email, string newPassword)
     {
@@ -161,32 +175,32 @@ namespace Services
     }
 
     public async Task<(bool, string)> SendForgotPasswordEmailAsync(string email)
+    {
+        var random = new Random();
+        var verificationCode = random.Next(100000, 999999).ToString();
+        _verificationCodes[email] = verificationCode;
+
+
+
+        return (true, verificationCode);
+    }
+    public async Task<bool> VerifyVerificationCodeAsync(string email, string verificationCode)
+    {
+        if (_verificationCodes.TryGetValue(email, out string storedCode) && storedCode == verificationCode)
         {
-            var random = new Random();
-            var verificationCode = random.Next(100000, 999999).ToString();
-            _verificationCodes[email] = verificationCode;
-
-            
-
-            return (true, verificationCode);
+            _verificationCodes.Remove(email);
+            return true;
         }
-        public async Task<bool> VerifyVerificationCodeAsync(string email, string verificationCode)
-        {
-            if (_verificationCodes.TryGetValue(email, out string storedCode) && storedCode == verificationCode)
-            {
-                _verificationCodes.Remove(email);
-                return true;
-            }
 
-            return false;
-        }
-        public async Task<bool> RegisterUserAsync(RegisterDTO model)
+        return false;
+    }
+    public async Task<bool> RegisterUserAsync(RegisterDTO model)
+    {
+        // Kiểm tra xem email đã được sử dụng chưa
+        if (await _userRepository.AnyAsync(u => u.Email == model.Email && u.DisplayName == model.DisplayName))
         {
-            // Kiểm tra xem email đã được sử dụng chưa
-            if (await _userRepository.AnyAsync(u => u.Email == model.Email&& u.DisplayName == model.DisplayName))
-            {
-                return false; // Trả về false nếu email đã được sử dụng
-            }
+            return false; // Trả về false nếu email đã được sử dụng
+        }
         var random = new Random();
         var verificationCode = random.Next(100000, 999999).ToString();
         var customer = new CustomerModel
@@ -196,7 +210,7 @@ namespace Services
             Email = model.Email,
             PhoneNumber = model.PhoneNumber,
             Gender = model.Gender,
-            DateOfBirth =model.DateOfBirth,
+            DateOfBirth = model.DateOfBirth,
             Code = verificationCode,
         };
         _customerRepository.Add(customer);
@@ -206,7 +220,7 @@ namespace Services
         {
             Id = model.Id,
             Email = model.Email,
-           
+
             DisplayName = model.DisplayName,
             RoleId = 2,
             PhoneNumber = model.PhoneNumber,
@@ -217,31 +231,32 @@ namespace Services
             HashedPassword = await PasswordHashing(model.Password, salt)
 
         };
-            _userRepository.Add(user);
-            await _userRepository.SaveChanges();
-            //var userRole = new UserRoleModel
-            //{
-            //    RoleId = user.RoleId,
-            //    UserId = user.Id,
-            //};
-            // Kiểm tra xem vai trò có tồn tại không
+        _userRepository.Add(user);
+        await _userRepository.SaveChanges();
+        //var userRole = new UserRoleModel
+        //{
+        //    RoleId = user.RoleId,
+        //    UserId = user.Id,
+        //};
+        // Kiểm tra xem vai trò có tồn tại không
 
 
-            // Nếu vai trò không tồn tại, thiết lập mặc định là "customer"
-            //var roleEntity = await _roleRepository.GetSingleByCondition(r => r.RoleTitle.ToLower() == "Customer");
+        // Nếu vai trò không tồn tại, thiết lập mặc định là "customer"
+        //var roleEntity = await _roleRepository.GetSingleByCondition(r => r.RoleTitle.ToLower() == "Customer");
 
 
-            //user.Role = roleEntity;
+        //user.Role = roleEntity;
 
-            //_userRoleRepository.Add(userRole);
+        //_userRoleRepository.Add(userRole);
 
-            //await _userRoleRepository.SaveChanges();
-            return true; // Trả về true nếu đăng ký thành công
-        }
+        //await _userRoleRepository.SaveChanges();
+        return true; // Trả về true nếu đăng ký thành công
+    }
     public async Task<CreateUserDTO> CreateUserAsync(CreateUserDTO model)
     {
         // Kiểm tra xem email đã được sử dụng chưa
-        try {
+        try
+        {
             if (await _userRepository.AnyAsync(u => u.Email == model.Email && u.DisplayName == model.DisplayName))
             {
                 return null;
@@ -253,7 +268,7 @@ namespace Services
                 Email = model.Email,
 
                 DisplayName = model.DisplayName,
-                RoleId =model.RoleId,
+                RoleId = model.RoleId,
                 PhoneNumber = model.PhoneNumber,
                 LastOnline = model.LastOnline,
                 CustomerId = model.CustomerId,
@@ -264,18 +279,19 @@ namespace Services
             };
             await _userRepository.AddAsync(user);
             await _userRepository.SaveChanges();
-            return _mapper.Map<CreateUserDTO>(user);   
+            return _mapper.Map<CreateUserDTO>(user);
 
 
-        } catch 
+        }
+        catch
         (Exception ex)
         {
-        throw new Exception(ex.Message, ex);
-        
-        }
-        
+            throw new Exception(ex.Message, ex);
 
-       
+        }
+
+
+
     }
     public async Task<int> Delete(int id)
     {
