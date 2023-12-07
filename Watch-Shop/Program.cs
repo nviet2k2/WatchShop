@@ -91,7 +91,6 @@ namespace Watch_Shop
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IAccessoryRepository, AccessoryRepository>();
             builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
             builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
@@ -100,6 +99,7 @@ namespace Watch_Shop
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+            builder.Services.AddScoped<IPaymentOrderRepository, PaymentOrderRepository>();
             builder.Services.AddScoped<IAddressRepository, AddressRepository>();
             builder.Services.AddScoped<IProductReviewRepository, ProductReviewRepository>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
@@ -110,7 +110,7 @@ namespace Watch_Shop
             //Services
 
             builder.Services.AddScoped<IProductService, ProductService>();
-            
+            builder.Services.AddScoped<IRoleService, RoleService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IBrandService, BrandService>();

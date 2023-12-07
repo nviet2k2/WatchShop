@@ -7,7 +7,6 @@ namespace Database
     public class WebApiContext : DbContext
     {
         public WebApiContext(DbContextOptions<WebApiContext> options) : base(options) { }
-        public DbSet<TestModel> Tests { get; set; }
         public DbSet<OrderDetailModel> BillDetails { get; set; }
         public DbSet<OrderModel> BillModels { get; set; }
         public DbSet<BrandModel> BrandModels { get; set; }
@@ -22,10 +21,13 @@ namespace Database
         public DbSet<RolePermissionModel> RolePermissionsModels { get; set; }
         public DbSet<VoucherModel> VoucherModels { get; set; }
         public DbSet<OrderPaymentModel> OrderPaymentModels { get; set; }
+        public DbSet<OrganizationPersonaTitleModel> OrganizationPersonaTitleModels { get; set; }
         //public DbSet<AccessoryModel> AccessoriesModels { get; set; }
         public DbSet<AddressModel> AddressModels { get; set; }
         public DbSet<ProductReviewModel> ProductReviewModels { get; set; }
         public DbSet<PaymentModel> PaymentModels { get; set; }
+        public DbSet<CustomerModel> CustomerModels { get; set; }
+        public DbSet<EmployeeModel> EmployeeModels { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<RoleModel>().HasData(

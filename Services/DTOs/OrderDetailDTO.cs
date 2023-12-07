@@ -14,4 +14,14 @@ namespace Services.DTOs
         public double UnitPrice { get; set; }
         public int Quantity { get; set; }
     }
+    public class ListOrderDetailDTO
+    {
+        public int Id { get; set; }
+        public int OrderId { get; set; }
+        public OrderDTO? Order { get; set; } 
+        public int? ProductId { get; set; }
+        public ProductDTO? Product { get; set; }
+        public double UnitPrice { get; set; }
+        public int Quantity { get; set; }
+    }
 }

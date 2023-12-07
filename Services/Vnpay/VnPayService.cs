@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CodeMegaVNPay.Models;
 using Core.Domains;
 using Database.Models;
 using Microsoft.AspNetCore.Http;

@@ -18,9 +18,9 @@ namespace Services
 
     public interface IOrderService
     {
-        Task<PaginationSetModel<OrderDetailDTO>> GetAllDetailCUSTOMER(PaginationQueryModel queryModel, int id);
+        Task<PaginationSetModel<ListOrderDetailDTO>> GetAllDetailCUSTOMER(PaginationQueryModel queryModel, int id);
         Task<PaginationSetModel<OrderDTO>> GetAllCUSTOMER(PaginationQueryModel queryModel, int id);
-        Task<PaginationSetModel<OrderDetailDTO>> GetAllDetailADMIN(PaginationQueryModel queryModel);
+        Task<PaginationSetModel<ListOrderDetailDTO>> GetAllDetailADMIN(PaginationQueryModel queryModel);
         Task<PaginationSetModel<OrderDTO>> GetAllADMIN(PaginationQueryModel queryModel);
         Task<OrderDTO> CanceleOrder(int id);
         Task<OrderDTO> UpdateStatus(OrderDTO payload);
@@ -37,25 +37,27 @@ namespace Services
         private readonly IOrderDetailRepository _detailRepository;
         private readonly IProductRepository _productRepository;
         private readonly IPaymentRepository _paymentRepository;
-        private readonly IMapper _mapper;
-        public OrderService(IOrderRepository repository, IMapper mapper, IOrderDetailRepository detailRepository, IProductRepository productRepository, IPaymentRepository paymentRepository)
+        private readonly IPaymentOrderRepository _paymentOrderRepository;
+       private readonly IMapper _mapper;
+        public OrderService(IOrderRepository repository, IMapper mapper, IOrderDetailRepository detailRepository, IProductRepository productRepository, IPaymentRepository paymentRepository, IPaymentOrderRepository paymentOrderRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _detailRepository = detailRepository;
             _productRepository = productRepository;
             _paymentRepository = paymentRepository;
+            _paymentOrderRepository = paymentOrderRepository;
         }
 
-        public async Task<PaginationSetModel<OrderDetailDTO>> GetAllDetailADMIN(PaginationQueryModel queryModel)
+        public async Task<PaginationSetModel<ListOrderDetailDTO>> GetAllDetailADMIN(PaginationQueryModel queryModel)
         {
             try
             {
                 var data = _detailRepository
                     .GetAll().ToList();
-                var mappedData = _mapper.Map<List<OrderDetailModel>, List<OrderDetailDTO>>(data);
+                var mappedData = _mapper.Map<List<OrderDetailModel>, List<ListOrderDetailDTO>>(data);
 
-                return new PaginationSetModel<OrderDetailDTO>(queryModel.PageNumber, queryModel.PageSize, mappedData);
+                return new PaginationSetModel<ListOrderDetailDTO>(queryModel.PageNumber, queryModel.PageSize, mappedData);
             }
             catch (Exception ex)
             {
@@ -103,12 +105,15 @@ namespace Services
         }
         public async Task<CreateOrderDTO> Create(CreateOrderDTO payload, int UserId)
         {
+            var random = new Random();
+            var randomNumber = random.Next(1, 100);
             var pay = new PaymentModel
             {
-                PaymentCode = "1",
+
+                PaymentCode = randomNumber.ToString(),
                 PaymentMethod = "Thanh toán khi nhận hàng",
-                status = "d",
-                transactionId = "1232"
+                transactionId = randomNumber.ToString(),
+                status = "Đã thanh toán"
             };
             await _paymentRepository.AddAsync(pay);
             await _paymentRepository.SaveChanges();
@@ -123,10 +128,19 @@ namespace Services
 
 
             };
+           
             try
             {
                 await _repository.AddAsync(data);
                 await _repository.SaveChanges();
+                var orderPayment = new OrderPaymentModel
+                {
+                  
+                    OrderId =data.Id,
+                    PaymentId = pay.Id,
+                };
+                await _paymentOrderRepository.AddAsync(orderPayment);
+                await _paymentRepository.SaveChanges();
                 foreach (var item in payload.details)
                 {
                     var datadetail = _mapper.Map<OrderDetailModel>(item);
@@ -266,7 +280,7 @@ namespace Services
 
 
 
-        public async Task<PaginationSetModel<OrderDetailDTO>> GetAllDetailCUSTOMER(PaginationQueryModel queryModel, int id)
+        public async Task<PaginationSetModel<ListOrderDetailDTO>> GetAllDetailCUSTOMER(PaginationQueryModel queryModel, int id)
         {
 
             try
@@ -276,9 +290,9 @@ namespace Services
                     .Where(x => x.Bill.UserId == id)
                     .ToList();  // Execute the query to retrieve the data from the database
 
-                var mappedData = _mapper.Map<List<OrderDetailModel>, List<OrderDetailDTO>>(data);
+                var mappedData = _mapper.Map<List<OrderDetailModel>, List<ListOrderDetailDTO>>(data);
 
-                return new PaginationSetModel<OrderDetailDTO>(queryModel.PageNumber, queryModel.PageSize, mappedData);
+                return new PaginationSetModel<ListOrderDetailDTO>(queryModel.PageNumber, queryModel.PageSize, mappedData);
             }
             catch (Exception ex)
             {

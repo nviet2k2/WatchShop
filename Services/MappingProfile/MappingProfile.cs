@@ -15,7 +15,7 @@ namespace Services.MappingProfile
         public MappingProfile()
         {
             CreateMap<CommonModel, CommonDTO>().ReverseMap();
-            CreateMap<TestModel, TestDTO>().ReverseMap();
+            CreateMap<RoleModel, RoleDTO>().ReverseMap();
             CreateMap<ProductModel, ProductDTO>().ReverseMap();
             CreateMap<BrandModel, BrandDTO>().ReverseMap();
             CreateMap<CategoryModel, CategoryDTO>().ReverseMap();
@@ -39,8 +39,11 @@ namespace Services.MappingProfile
             CreateMap<UserModel, CreateUserDTO>().ReverseMap();
             CreateMap<OrderModel, CreateOrderDTO>().ReverseMap();
             CreateMap<OrderDetailModel, OrderDetailDTO>().ReverseMap();
+            CreateMap<OrderDetailModel, ListOrderDetailDTO>().ReverseMap();
             CreateMap<OrganizationPersonaTitleModel, OrganizationPersonaTitleDTO>().ReverseMap();
             CreateMap<VoucherModel, VoucherDTO>().ReverseMap();
+            CreateMap<OrderPaymentModel, OrderPaymentDTO>().ReverseMap();
+
         }
     }
 }

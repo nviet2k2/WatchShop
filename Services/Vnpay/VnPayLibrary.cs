@@ -53,6 +53,7 @@ public class VnPayLibrary
             TransactionId = vnPayTranId.ToString(),
             Token = vnpSecureHash,
             VnPayResponseCode = vnpResponseCode
+            
         };
     }
     public string GetIpAddress(HttpContext context)

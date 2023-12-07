@@ -1,5 +1,5 @@
-﻿using CodeMegaVNPay.Models;
-using Core.Domains;
+﻿using Core.Domains;
+using Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -69,9 +69,54 @@ namespace Watch_Shop.Controllers
         public IActionResult PaymentCallback()
         {
             var response = _vnPayService.PaymentExecute(Request.Query);
-            
-            return Ok(response); 
+
+            if (response.Success)
+            {
+                // Return a JSON response with success data
+                return Ok(new
+                {
+                    Success = true,
+                    RedirectUrl = "http://localhost:3000/success-cart" +
+                                  $"?orderId={response.OrderId}" +
+                                  $"&paymentId={response.PaymentId}" +
+                                  $"&transactionId={response.TransactionId}" +
+                                  $"&orderDescription={response.OrderDescription}" +
+                                  $"&paymentMethod={response.PaymentMethod}"
+                });
+            }
+
+           
+            return Ok(new
+            {
+                Success = false,
+                ErrorMessage = "Payment was not successful",
+               
+            });
         }
+        [HttpGet("success-cart")]
+        public IActionResult SuccessCart([FromQuery]SuccessCartDTO payload)
+        {
+            var orderId = payload.OrderId;
+            var paymentId = payload.PaymentId;
+            var transactionId = payload.TransactionId;
+            var orderDescription = payload.OrderDescription;
+            var paymentMethod = payload.PaymentMethod;
+            var responseData = new 
+            {
+                OrderId = orderId,
+                PaymentId = paymentId,
+                TransactionId = transactionId,
+                OrderDescription = orderDescription,
+                PaymentMethod = paymentMethod,
+              
+
+                Message = "Payment successful. Thank you!"
+
+            };
+
+            return Ok(responseData);
+        }
+
         [HttpGet("OrderConfirmation")]
         public async Task<IActionResult> OrderConfirmation(int id)
         {
