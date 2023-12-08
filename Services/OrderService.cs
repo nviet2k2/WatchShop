@@ -8,6 +8,7 @@ using Repositories;
 using Services.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -24,6 +25,7 @@ namespace Services
         Task<PaginationSetModel<OrderDTO>> GetAllADMIN(PaginationQueryModel queryModel);
         Task<OrderDTO> CanceleOrder(int id);
         Task<OrderDTO> UpdateStatus(OrderDTO payload);
+        Task<string> UpdateOrder(int orderId,string newStatus);
         Task<CreateOrderDTO> Create(CreateOrderDTO payload, int UserId);
         Task<byte[]> ExportExcel();
 
@@ -177,6 +179,22 @@ namespace Services
             await _repository.SaveChanges();
             return _mapper.Map<OrderDTO>(data);
         }
+        public async Task<string> UpdateOrder(int orderId, string newStatus)
+        {
+            var data = await _repository.FirstOrDefaultAsync(x => x.Id == orderId);
+
+            if (data != null)
+            {
+                data.OrderStatus = newStatus;
+                await _repository.SaveChanges();
+                return "đã thanh toán";
+            }
+            else
+            {
+                throw new Exception("Không tồn tại đơn hàng này");
+            }
+        }
+
         public async Task<OrderDTO> UpdateStatus(OrderDTO payload)
         {
             var data = await _repository.FirstOrDefaultAsync(x => x.Id == payload.Id);

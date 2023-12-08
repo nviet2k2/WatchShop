@@ -65,33 +65,37 @@ namespace Watch_Shop.Controllers
             }
         }
 
-        [HttpGet("PaymentCallback")]
-        public IActionResult PaymentCallback()
+        [HttpGet("paymentCallback")]
+        public IActionResult PaymentCallback([FromQuery] Dictionary<string, string> queryParams)
         {
-            var response = _vnPayService.PaymentExecute(Request.Query);
+            string vnp_ResponseCode = queryParams.GetValueOrDefault("vnp_ResponseCode");
+            string orderId = queryParams.GetValueOrDefault("orderId");
 
-            if (response.Success)
+            if (!string.IsNullOrEmpty(orderId))
             {
-                // Return a JSON response with success data
-                return Ok(new
+                if ("00".Equals(vnp_ResponseCode))
                 {
-                    Success = true,
-                    RedirectUrl = "http://localhost:3000/success-cart" +
-                                  $"?orderId={response.OrderId}" +
-                                  $"&paymentId={response.PaymentId}" +
-                                  $"&transactionId={response.TransactionId}" +
-                                  $"&orderDescription={response.OrderDescription}" +
-                                  $"&paymentMethod={response.PaymentMethod}"
-                });
+                    
+                    if (int.TryParse(orderId, out int orderIdInt))
+                    {
+                        try
+                        {
+                            _orderService.UpdateOrder(orderIdInt, "Đã thanh toán");
+                            return Redirect("http://localhost:4200/sucess-cart");
+                        }
+                        catch (Exception ex)
+                        {
+                            return NotFound(ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    
+                    return Redirect("http://localhost:4200/payment-failed");
+                }
             }
-
-           
-            return Ok(new
-            {
-                Success = false,
-                ErrorMessage = "Payment was not successful",
-               
-            });
+            return BadRequest("Invalid contractId");
         }
         [HttpGet("success-cart")]
         public IActionResult SuccessCart([FromQuery]SuccessCartDTO payload)

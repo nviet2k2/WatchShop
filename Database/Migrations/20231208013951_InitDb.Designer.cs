@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(WebApiContext))]
-    [Migration("20231205120324_InitDb")]
+    [Migration("20231208013951_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -202,7 +202,7 @@ namespace Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CustomerModel");
+                    b.ToTable("CustomerModels");
                 });
 
             modelBuilder.Entity("Database.Models.EmployeeModel", b =>
@@ -265,7 +265,7 @@ namespace Database.Migrations
 
                     b.HasIndex("OrganizationPersonaTitleId");
 
-                    b.ToTable("EmployeeModel");
+                    b.ToTable("EmployeeModels");
                 });
 
             modelBuilder.Entity("Database.Models.OrderDetailModel", b =>
@@ -427,7 +427,7 @@ namespace Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrganizationPersonaTitleModel");
+                    b.ToTable("OrganizationPersonaTitleModels");
                 });
 
             modelBuilder.Entity("Database.Models.PaymentModel", b =>
@@ -755,28 +755,28 @@ namespace Database.Migrations
                         {
                             Id = 1,
                             Active = true,
-                            CreatedDT = new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8546),
+                            CreatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2580),
                             Description = "Admin",
                             RoleTitle = "Admin",
-                            UpdatedDT = new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8559)
+                            UpdatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2592)
                         },
                         new
                         {
                             Id = 2,
                             Active = true,
-                            CreatedDT = new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8562),
+                            CreatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2597),
                             Description = "Customer",
                             RoleTitle = "Customer",
-                            UpdatedDT = new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8562)
+                            UpdatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2597)
                         },
                         new
                         {
                             Id = 3,
                             Active = true,
-                            CreatedDT = new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8564),
+                            CreatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2599),
                             Description = "Employee",
                             RoleTitle = "Employee",
-                            UpdatedDT = new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8564)
+                            UpdatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2600)
                         });
                 });
 
@@ -845,44 +845,6 @@ namespace Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SuppliersModels");
-                });
-
-            modelBuilder.Entity("Database.Models.TestModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDT")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Img")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDT")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tests");
                 });
 
             modelBuilder.Entity("Database.Models.UserModel", b =>

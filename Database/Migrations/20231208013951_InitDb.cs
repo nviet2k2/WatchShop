@@ -50,7 +50,7 @@ namespace Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomerModel",
+                name: "CustomerModels",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -71,11 +71,11 @@ namespace Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomerModel", x => x.Id);
+                    table.PrimaryKey("PK_CustomerModels", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrganizationPersonaTitleModel",
+                name: "OrganizationPersonaTitleModels",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -91,7 +91,7 @@ namespace Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrganizationPersonaTitleModel", x => x.Id);
+                    table.PrimaryKey("PK_OrganizationPersonaTitleModels", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -148,26 +148,6 @@ namespace Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SuppliersModels", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tests",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Img = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedDT = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UpdatedDT = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tests", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -255,15 +235,15 @@ namespace Database.Migrations
                 {
                     table.PrimaryKey("PK_AddressModels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AddressModels_CustomerModel_CustomerId",
+                        name: "FK_AddressModels_CustomerModels_CustomerId",
                         column: x => x.CustomerId,
-                        principalTable: "CustomerModel",
+                        principalTable: "CustomerModels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeeModel",
+                name: "EmployeeModels",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -285,11 +265,11 @@ namespace Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeModel", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeModels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmployeeModel_OrganizationPersonaTitleModel_OrganizationPersonaTitleId",
+                        name: "FK_EmployeeModels_OrganizationPersonaTitleModels_OrganizationPersonaTitleId",
                         column: x => x.OrganizationPersonaTitleId,
-                        principalTable: "OrganizationPersonaTitleModel",
+                        principalTable: "OrganizationPersonaTitleModels",
                         principalColumn: "Id");
                 });
 
@@ -524,14 +504,14 @@ namespace Database.Migrations
                 {
                     table.PrimaryKey("PK_UserModels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserModels_CustomerModel_CustomerId",
+                        name: "FK_UserModels_CustomerModels_CustomerId",
                         column: x => x.CustomerId,
-                        principalTable: "CustomerModel",
+                        principalTable: "CustomerModels",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UserModels_EmployeeModel_EmployeeId",
+                        name: "FK_UserModels_EmployeeModels_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "EmployeeModel",
+                        principalTable: "EmployeeModels",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserModels_RoleModels_RoleId",
@@ -546,9 +526,9 @@ namespace Database.Migrations
                 columns: new[] { "Id", "Active", "CreatedBy", "CreatedDT", "Description", "RoleTitle", "UpdatedBy", "UpdatedDT", "UserModelId" },
                 values: new object[,]
                 {
-                    { 1, true, null, new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8546), "Admin", "Admin", null, new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8559), null },
-                    { 2, true, null, new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8562), "Customer", "Customer", null, new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8562), null },
-                    { 3, true, null, new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8564), "Employee", "Employee", null, new DateTime(2023, 12, 5, 20, 3, 24, 105, DateTimeKind.Local).AddTicks(8564), null }
+                    { 1, true, null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2580), "Admin", "Admin", null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2592), null },
+                    { 2, true, null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2597), "Customer", "Customer", null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2597), null },
+                    { 3, true, null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2599), "Employee", "Employee", null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2600), null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -577,8 +557,8 @@ namespace Database.Migrations
                 column: "VoucherId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeModel_OrganizationPersonaTitleId",
-                table: "EmployeeModel",
+                name: "IX_EmployeeModels_OrganizationPersonaTitleId",
+                table: "EmployeeModels",
                 column: "OrganizationPersonaTitleId");
 
             migrationBuilder.CreateIndex(
@@ -710,7 +690,7 @@ namespace Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_UserModels_CustomerModel_CustomerId",
+                name: "FK_UserModels_CustomerModels_CustomerId",
                 table: "UserModels");
 
             migrationBuilder.DropForeignKey(
@@ -734,9 +714,6 @@ namespace Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "RolePermissionsModels");
-
-            migrationBuilder.DropTable(
-                name: "Tests");
 
             migrationBuilder.DropTable(
                 name: "BillModels");
@@ -766,19 +743,19 @@ namespace Database.Migrations
                 name: "SuppliersModels");
 
             migrationBuilder.DropTable(
-                name: "CustomerModel");
+                name: "CustomerModels");
 
             migrationBuilder.DropTable(
                 name: "UserModels");
 
             migrationBuilder.DropTable(
-                name: "EmployeeModel");
+                name: "EmployeeModels");
 
             migrationBuilder.DropTable(
                 name: "RoleModels");
 
             migrationBuilder.DropTable(
-                name: "OrganizationPersonaTitleModel");
+                name: "OrganizationPersonaTitleModels");
         }
     }
 }
