@@ -13,6 +13,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Services
 {
@@ -25,7 +26,8 @@ namespace Services
         Task<PaginationSetModel<OrderDTO>> GetAllADMIN(PaginationQueryModel queryModel);
         Task<OrderDTO> CanceleOrder(int id);
         Task<OrderDTO> UpdateStatus(OrderDTO payload);
-        Task<string> UpdateOrder(int orderId, int userId, string newStatus);
+        Task<string> UpdateOrder(string orderId, string newStatus, double amount);
+        //Task<string> UpdateOrder(string orderId, int userId, string newStatus,double amount);
         Task<CreateOrderDTO> Create(CreateOrderDTO payload, int UserId);
         Task<byte[]> ExportExcel();
 
@@ -127,8 +129,8 @@ namespace Services
                 VoucherId = payload.VoucherId,
                 UserId = UserId,
                 Note = payload.Note,
-
-
+                OrderCode = randomNumber.ToString(),
+                CreateDate = DateTime.UtcNow,
             };
            
             try
@@ -152,7 +154,11 @@ namespace Services
                     var dataproduct = _productRepository.FirstOrDefault(x => x.Id == datadetail.ProductId);
                     if(dataproduct != null) {
                         dataproduct.Quantity -= datadetail.Quantity;
-                         _productRepository.Update(dataproduct);
+                        if (dataproduct.Quantity < 0)
+                        {
+                            dataproduct.Quantity = 0; 
+                        }
+                        _productRepository.Update(dataproduct);
                         await _productRepository.SaveChanges();
                     }
                     else
@@ -190,14 +196,60 @@ namespace Services
             await _repository.SaveChanges();
             return _mapper.Map<OrderDTO>(data);
         }
-        public async Task<string> UpdateOrder(int orderId,int userId, string newStatus)
+        public async Task<string> UpdateOrder(string orderId, string newStatus, double amount)
+        {
+
+            var data = await _repository.FirstOrDefaultAsync(x => x.OrderCode == orderId);
+            if (data == null)
+            {
+                throw new Exception("Không tìm thấy đơn hàng");
+            }
+            try
+            {
+                data.OrderStatus = newStatus;
+                data.TotalPrice -= amount;
+
+                var random = new Random();
+                var randomNumber = random.Next(1, 100);
+                var pay = new PaymentModel
+                {
+                    PaymentCode = randomNumber.ToString(),
+                    PaymentMethod = "Thanh toán Vnpay",
+                    transactionId = randomNumber.ToString(),
+                    status = "Đã thanh toán"
+                };
+
+                await _paymentRepository.AddAsync(pay);
+                await _paymentRepository.SaveChanges();
+                var orderPayment = new OrderPaymentModel
+                {
+
+                    OrderId = data.Id,
+                    PaymentId = pay.Id,
+                };
+                await _paymentOrderRepository.AddAsync(orderPayment);
+                await _paymentRepository.SaveChanges();
+                _repository.Update(data);
+                await _repository.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            
+            return "Đã thành toán";
+        }
+
+        public async Task<string> UpdateOrder(string orderId,int userId, string newStatus, double amount)
         {
             
-            var data = await _repository.FirstOrDefaultAsync(x => x.Id == orderId&&x.UserId== userId);
+            var data = await _repository.FirstOrDefaultAsync(x => x.OrderCode == orderId&&x.UserId== userId);
 
             if (data != null)
             {
                 data.OrderStatus = newStatus;
+                data.TotalPrice -= amount;
                 await _repository.SaveChanges();
                 var random = new Random();
                 var randomNumber = random.Next(1, 100);

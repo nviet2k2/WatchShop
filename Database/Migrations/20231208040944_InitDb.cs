@@ -312,6 +312,7 @@ namespace Database.Migrations
                     VoucherId = table.Column<int>(type: "int", nullable: true),
                     OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDT = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -526,9 +527,9 @@ namespace Database.Migrations
                 columns: new[] { "Id", "Active", "CreatedBy", "CreatedDT", "Description", "RoleTitle", "UpdatedBy", "UpdatedDT", "UserModelId" },
                 values: new object[,]
                 {
-                    { 1, true, null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2580), "Admin", "Admin", null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2592), null },
-                    { 2, true, null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2597), "Customer", "Customer", null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2597), null },
-                    { 3, true, null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2599), "Employee", "Employee", null, new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2600), null }
+                    { 1, true, null, new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3684), "Admin", "Admin", null, new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3694), null },
+                    { 2, true, null, new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3696), "Customer", "Customer", null, new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3696), null },
+                    { 3, true, null, new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3698), "Employee", "Employee", null, new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3698), null }
                 });
 
             migrationBuilder.CreateIndex(

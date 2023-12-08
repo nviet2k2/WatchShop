@@ -390,13 +390,6 @@ namespace Services
                         var productKey = $"{productName}_{CategoryId}_{BrandId}";
                         if (!string.IsNullOrWhiteSpace(productName) && !uniqueProductNames.Contains(productKey))
                         {
-                            // Kiểm tra xem bộ ba giá trị đã tồn tại trong cơ sở dữ liệu hay không
-                            //var existingProduct = GetProductByNameAsync( CategoryId, BrandId); // Thay thế bằng phương thức tương ứng trong repository của bạn
-
-                            //if (existingProduct != null)
-                            //{
-                            //    return $"Import thất bại: Dữ liệu với  CategoryId '{CategoryId}' và BrandId '{BrandId}' đã tồn tại trong cơ sở dữ liệu. Hãy sửa lại dữ liệu.";
-                            //}
 
                             // Thêm bộ ba giá trị vào HashSet để đảm bảo không thêm sản phẩm trùng lặp
                             uniqueProductNames.Add(productKey);

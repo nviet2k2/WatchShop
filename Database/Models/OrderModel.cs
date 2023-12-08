@@ -18,5 +18,6 @@ namespace Database.Models
         public virtual VoucherModel? Voucher { get; set; }
         public string? OrderStatus { get; set; }
         public string Note { get; set; }
+        public string OrderCode { get; set; }
     }
 }

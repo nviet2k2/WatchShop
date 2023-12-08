@@ -36,8 +36,7 @@ namespace Watch_Shop.Controllers
 
               
                 var result = await _orderService.Create(payload, userId);
-                return Ok(new BaseResponseModel(result));
-            
+                return Redirect("http://localhost:3000/sucess-cart");
             }
             catch (Exception ex)
             {
@@ -64,28 +63,29 @@ namespace Watch_Shop.Controllers
                 return Ok(new BaseResponseModel(null, false, StatusCodes.Status500InternalServerError, ex.Message));
             }
         }
-        [Authorize()]
+        //[Authorize()]
         [HttpGet("paymentCallback")]
         public IActionResult PaymentCallback([FromQuery] Dictionary<string, string> queryParams)
         {
             string vnp_ResponseCode = queryParams.GetValueOrDefault("vnp_ResponseCode");
             string orderId = queryParams.GetValueOrDefault("vnp_TxnRef");
-
+            
+              string total = queryParams.GetValueOrDefault("vnp_Amount");
             if (!string.IsNullOrEmpty(orderId))
             {
                 if (vnp_ResponseCode=="00")
                 {
-                    
-                    if (int.TryParse(orderId, out int orderIdInt))
+                    if (double.TryParse(total, out double amount))
                     {
                         try
                         {
 
-                            var claimsIdentity = (ClaimsIdentity)User.Identity;
-                            var userIdString = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-                            int.TryParse(userIdString, out int userId);
+                            //var claimsIdentity = (ClaimsIdentity)User.Identity;
+                            //var userIdString = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                            //int.TryParse(userIdString, out int userId);
 
-                            _orderService.UpdateOrder(orderIdInt, userId, "Đã thanh toán");
+                            //_orderService.UpdateOrder(orderId, userId, "Đã thanh toán", amount);
+                            _orderService.UpdateOrder(orderId, "Hoàn thành", amount);
                             return Redirect("http://localhost:3000/sucess-cart");
                         }
                         catch (Exception ex)
@@ -93,6 +93,8 @@ namespace Watch_Shop.Controllers
                             return NotFound(ex.Message);
                         }
                     }
+                    
+                    
                 }
                 else
                 {
@@ -102,43 +104,6 @@ namespace Watch_Shop.Controllers
             }
             return BadRequest("Không tìm thấy OrderId");
         }
-        [HttpGet("success-cart")]
-        public IActionResult SuccessCart([FromQuery]SuccessCartDTO payload)
-        {
-            var orderId = payload.OrderId;
-            var paymentId = payload.PaymentId;
-            var transactionId = payload.TransactionId;
-            var orderDescription = payload.OrderDescription;
-            var paymentMethod = payload.PaymentMethod;
-            var responseData = new 
-            {
-                OrderId = orderId,
-                PaymentId = paymentId,
-                TransactionId = transactionId,
-                OrderDescription = orderDescription,
-                PaymentMethod = paymentMethod,
-              
-
-                Message = "Payment successful. Thank you!"
-
-            };
-
-            return Ok(responseData);
-        }
-
-        [HttpGet("OrderConfirmation")]
-        public async Task<IActionResult> OrderConfirmation(int id)
-        {
-            try
-            {
-                var result = await _orderService.GetById(id);
-
-                return Ok(new BaseResponseModel(result));
-            }
-            catch (Exception ex)
-            {
-                return Ok(new BaseResponseModel(null, false, StatusCodes.Status500InternalServerError, ex.Message));
-            }
-        }
+       
     }
 }

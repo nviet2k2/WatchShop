@@ -43,6 +43,7 @@ namespace Services.Vnpay
                 TotalPrice = model.TotalPrice,
                 UserId = UserId,
                 CreateDate = model.CreateDate,
+                OrderCode = tick
             };
 
             await _orderRepository.AddAsync(data);
@@ -79,7 +80,7 @@ namespace Services.Vnpay
             pay.AddRequestData("vnp_OrderInfo", $"{model.Note} {model.Note} {model.TotalPrice}");
             pay.AddRequestData("vnp_OrderType", model.Note);
             pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
-            pay.AddRequestData("vnp_TxnRef", data.Id.ToString());
+            pay.AddRequestData("vnp_TxnRef", data.OrderCode);
 
             var paymentUrl =
                 pay.CreateRequestUrl(_configuration["Vnpay:BaseUrl"], _configuration["Vnpay:HashSecret"]);
@@ -87,30 +88,30 @@ namespace Services.Vnpay
             return paymentUrl;
         }
 
-        public PaymentResponseVnpayModel PaymentExecute(IQueryCollection collections)
-        {
-            var pay = new VnPayLibrary();
-            var response = pay.GetFullResponseData(collections, _configuration["Vnpay:HashSecret"]);
+        //public PaymentResponseVnpayModel PaymentExecute(IQueryCollection collections)
+        //{
+        //    var pay = new VnPayLibrary();
+        //    var response = pay.GetFullResponseData(collections, _configuration["Vnpay:HashSecret"]);
 
-            //// Kiểm tra xem response có null không
-            //if (response != null)
-            //{
-            //    // Tạo một đối tượng PaymentModel từ thông tin trong response
-            //    var payment = new PaymentModel
-            //    {
-            //        transactionId = response.TransactionId,
-            //        PaymentMethod = response.PaymentMethod,
-            //        PaymentCode = response.PaymentId,
-            //        // Các thuộc tính khác từ response
-            //    };
+        //    //// Kiểm tra xem response có null không
+        //    //if (response != null)
+        //    //{
+        //    //    // Tạo một đối tượng PaymentModel từ thông tin trong response
+        //    //    var payment = new PaymentModel
+        //    //    {
+        //    //        transactionId = response.TransactionId,
+        //    //        PaymentMethod = response.PaymentMethod,
+        //    //        PaymentCode = response.PaymentId,
+        //    //        // Các thuộc tính khác từ response
+        //    //    };
 
-            //    // Lưu đối tượng PaymentModel vào cơ sở dữ liệu
-            //    await _paymentRepository.AddAsync(payment);
-            //    await _paymentRepository.SaveChanges();
-            //}
+        //    //    // Lưu đối tượng PaymentModel vào cơ sở dữ liệu
+        //    //    await _paymentRepository.AddAsync(payment);
+        //    //    await _paymentRepository.SaveChanges();
+        //    //}
 
-            return response;
-        }
+        //    return response;
+        //}
 
     }
 }

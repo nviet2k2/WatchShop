@@ -337,6 +337,10 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OrderCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("OrderStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -752,28 +756,28 @@ namespace Database.Migrations
                         {
                             Id = 1,
                             Active = true,
-                            CreatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2580),
+                            CreatedDT = new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3684),
                             Description = "Admin",
                             RoleTitle = "Admin",
-                            UpdatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2592)
+                            UpdatedDT = new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3694)
                         },
                         new
                         {
                             Id = 2,
                             Active = true,
-                            CreatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2597),
+                            CreatedDT = new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3696),
                             Description = "Customer",
                             RoleTitle = "Customer",
-                            UpdatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2597)
+                            UpdatedDT = new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3696)
                         },
                         new
                         {
                             Id = 3,
                             Active = true,
-                            CreatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2599),
+                            CreatedDT = new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3698),
                             Description = "Employee",
                             RoleTitle = "Employee",
-                            UpdatedDT = new DateTime(2023, 12, 8, 9, 39, 51, 528, DateTimeKind.Local).AddTicks(2600)
+                            UpdatedDT = new DateTime(2023, 12, 8, 12, 9, 44, 649, DateTimeKind.Local).AddTicks(3698)
                         });
                 });
 

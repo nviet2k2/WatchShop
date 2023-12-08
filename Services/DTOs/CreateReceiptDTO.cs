@@ -12,7 +12,7 @@ namespace Services.DTOs
     {
 
         public int Id { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.Now;
         public int? SupplierId { get; set; }
         //public SupplierDTO Supplier { get; set; } 
         [JsonIgnore]

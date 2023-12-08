@@ -11,6 +11,7 @@ using System.Linq;
 using Core.Domains;
 using Core.QueryModels;
 using System.Linq.Expressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Services
 {
@@ -26,6 +27,7 @@ namespace Services
         Task<byte[]> GeneratePDFAsync(int id);
         Task<string>GetProductNameAsync(int? productId);
         Task<int[]> DeleteMultiple(int[] ids);
+       
     }
 
     public class ReceiptService : IReceiptService
@@ -33,14 +35,17 @@ namespace Services
         private readonly IReceiptRepository _receiptRepository;
         private readonly IReceiptDetailRepository _receiptDetailRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
 
-        public ReceiptService(IReceiptRepository receiptRepository, IReceiptDetailRepository receiptDetailRepository, IMapper mapper,IProductRepository productRepository)
+        public ReceiptService(IReceiptRepository receiptRepository,IEmployeeRepository employeeRepository,IUserRepository userRepository, IReceiptDetailRepository receiptDetailRepository, IMapper mapper,IProductRepository productRepository)
         {
             _receiptRepository = receiptRepository;
             _receiptDetailRepository = receiptDetailRepository;
             _productRepository = productRepository;
             _mapper = mapper;
+            _userRepository = userRepository;
         }
         public async Task IncreaseProductQuantity(int productId, int quantity)
         {
@@ -201,18 +206,21 @@ namespace Services
                 throw new Exception(ex.Message);
             }
         }
+       
         public async Task<byte[]> GeneratePDFAsync(int id)
         {
             var document = new PdfDocument();
-            var header = await _receiptRepository.FirstOrDefaultAsync(x => x.Id == id);
+           
             var details = await _receiptDetailRepository.FindAsync(x => x.ReceiptId == id);
-
+            var header = await _receiptRepository.FirstOrDefaultAsync(x => x.Id == id);
+            
+           
             string htmlcontent = "<div style='width:100%; text-align:center'>";
 
             htmlcontent += "<h2>Hóa đơn Nhập Hàng </h2>";
             if (header != null)
             {
-                htmlcontent += "<h2>  Nhân viên:"  +( header.UserId )+ " & Ngày Nhập:" + header.CreateDate + "</h2>";
+                htmlcontent += "<h2>  Nhân viên có mã tài khoản :"  +(header.UserId) + " & Ngày Nhập:" + header.CreateDate + "</h2>";
                 htmlcontent += "<div>";
             }
             htmlcontent += "<table style ='width:100%; border: 1px solid #000'>";
@@ -245,7 +253,7 @@ namespace Services
 
             htmlcontent += "</div>";
             htmlcontent += "<div style='text-align:right'>";
-            htmlcontent += "<h1> Tổng tiền :" +header.Total+"</h1>";
+            htmlcontent += "<h1> Tổng tiền :" +header.Total+"VND</h1>";
            
               
             htmlcontent += "</div>";

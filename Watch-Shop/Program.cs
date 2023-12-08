@@ -129,6 +129,7 @@ namespace Watch_Shop
             builder.Services.AddScoped<IOrganizationPersonaTitleService,OrganizationPersonaTitleService>();
             builder.Services.AddScoped<IVoucherService, VoucherService>();
             builder.Services.AddScoped<IPayPalService, PayPalService>();
+            builder.Services.AddScoped<IStatisticsService, StatisticsService>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddCors(options =>
             {

@@ -10,7 +10,7 @@ namespace Services.DTOs
     public class ReceiptDTO
     {
         public int Id { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.Now;
         public int? SupplierId { get; set; }
         public SupplierModel Supplier { get; set; }
         public int? UserId { get; set; }
