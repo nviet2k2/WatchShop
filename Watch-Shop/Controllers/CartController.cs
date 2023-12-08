@@ -64,24 +64,29 @@ namespace Watch_Shop.Controllers
                 return Ok(new BaseResponseModel(null, false, StatusCodes.Status500InternalServerError, ex.Message));
             }
         }
-
+        [Authorize()]
         [HttpGet("paymentCallback")]
         public IActionResult PaymentCallback([FromQuery] Dictionary<string, string> queryParams)
         {
             string vnp_ResponseCode = queryParams.GetValueOrDefault("vnp_ResponseCode");
-            string orderId = queryParams.GetValueOrDefault("orderId");
+            string orderId = queryParams.GetValueOrDefault("vnp_TxnRef");
 
             if (!string.IsNullOrEmpty(orderId))
             {
-                if ("00".Equals(vnp_ResponseCode))
+                if (vnp_ResponseCode=="00")
                 {
                     
                     if (int.TryParse(orderId, out int orderIdInt))
                     {
                         try
                         {
-                            _orderService.UpdateOrder(orderIdInt, "Đã thanh toán");
-                            return Redirect("http://localhost:4200/sucess-cart");
+
+                            var claimsIdentity = (ClaimsIdentity)User.Identity;
+                            var userIdString = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                            int.TryParse(userIdString, out int userId);
+
+                            _orderService.UpdateOrder(orderIdInt, userId, "Đã thanh toán");
+                            return Redirect("http://localhost:3000/sucess-cart");
                         }
                         catch (Exception ex)
                         {
@@ -92,10 +97,10 @@ namespace Watch_Shop.Controllers
                 else
                 {
                     
-                    return Redirect("http://localhost:4200/payment-failed");
+                    return Redirect("http://localhost:3000/payment-failed");
                 }
             }
-            return BadRequest("Invalid contractId");
+            return BadRequest("Không tìm thấy OrderId");
         }
         [HttpGet("success-cart")]
         public IActionResult SuccessCart([FromQuery]SuccessCartDTO payload)

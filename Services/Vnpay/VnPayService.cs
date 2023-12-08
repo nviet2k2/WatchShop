@@ -13,17 +13,19 @@ namespace Services.Vnpay
         private readonly IConfiguration _configuration;
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
-        private readonly IPaymentRepository _paymentRepository;
-        private readonly IOrderPaymentRepository _orderPaymentRepository;
+ 
+        private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
-        public VnPayService(IConfiguration configuration, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMapper mapper, IPaymentRepository paymentRepository, IOrderPaymentRepository orderPaymentRepository)
+        public VnPayService(IConfiguration configuration, 
+            IOrderRepository orderRepository, IOrderDetailRepository
+            orderDetailRepository, IMapper mapper,IProductRepository productRepository)
         {
             _configuration = configuration;
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
             _mapper = mapper;
-            _paymentRepository = paymentRepository;
-            _orderPaymentRepository = orderPaymentRepository;
+           
+            _productRepository = productRepository;
 
 
         }
@@ -50,7 +52,18 @@ namespace Services.Vnpay
                 var datadetail = _mapper.Map<OrderDetailModel>(item);
                 datadetail.BillId = data.Id;
                 await _orderDetailRepository.AddAsync(datadetail);
-                await _orderDetailRepository.SaveChanges(); 
+                await _orderDetailRepository.SaveChanges();
+                var dataproduct = _productRepository.FirstOrDefault(x => x.Id == datadetail.ProductId);
+                if (dataproduct != null)
+                {
+                    dataproduct.Quantity -= datadetail.Quantity;
+                    _productRepository.Update(dataproduct);
+                    await _productRepository.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception($"{dataproduct.Id} was not found");
+                }
             }
             var pay = new VnPayLibrary();
             var urlCallBack = _configuration["PaymentCallBack:ReturnUrl"];
@@ -58,7 +71,7 @@ namespace Services.Vnpay
             pay.AddRequestData("vnp_Version", _configuration["Vnpay:Version"]);
             pay.AddRequestData("vnp_Command", _configuration["Vnpay:Command"]);
             pay.AddRequestData("vnp_TmnCode", _configuration["Vnpay:TmnCode"]);
-            pay.AddRequestData("vnp_Amount", ((int)model.TotalPrice ).ToString());
+            pay.AddRequestData("vnp_Amount", ((int)model.TotalPrice * 100).ToString());
             pay.AddRequestData("vnp_CreateDate", timeNow.ToString("yyyyMMddHHmmss"));
             pay.AddRequestData("vnp_CurrCode", _configuration["Vnpay:CurrCode"]);
             pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context));

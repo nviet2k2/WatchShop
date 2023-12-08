@@ -25,7 +25,7 @@ namespace Services
         Task<PaginationSetModel<OrderDTO>> GetAllADMIN(PaginationQueryModel queryModel);
         Task<OrderDTO> CanceleOrder(int id);
         Task<OrderDTO> UpdateStatus(OrderDTO payload);
-        Task<string> UpdateOrder(int orderId,string newStatus);
+        Task<string> UpdateOrder(int orderId, int userId, string newStatus);
         Task<CreateOrderDTO> Create(CreateOrderDTO payload, int UserId);
         Task<byte[]> ExportExcel();
 
@@ -149,6 +149,17 @@ namespace Services
                     datadetail.BillId = data.Id;
                     await _detailRepository.AddAsync(datadetail);
                     await _detailRepository.SaveChanges();
+                    var dataproduct = _productRepository.FirstOrDefault(x => x.Id == datadetail.ProductId);
+                    if(dataproduct != null) {
+                        dataproduct.Quantity -= datadetail.Quantity;
+                         _productRepository.Update(dataproduct);
+                        await _productRepository.SaveChanges();
+                    }
+                    else
+                    {
+                        throw new Exception($"{dataproduct.Id} was not found");
+                    }
+                   
                 }
 
                 data.TotalPrice = payload.TotalPrice;
@@ -179,14 +190,34 @@ namespace Services
             await _repository.SaveChanges();
             return _mapper.Map<OrderDTO>(data);
         }
-        public async Task<string> UpdateOrder(int orderId, string newStatus)
+        public async Task<string> UpdateOrder(int orderId,int userId, string newStatus)
         {
-            var data = await _repository.FirstOrDefaultAsync(x => x.Id == orderId);
+            
+            var data = await _repository.FirstOrDefaultAsync(x => x.Id == orderId&&x.UserId== userId);
 
             if (data != null)
             {
                 data.OrderStatus = newStatus;
                 await _repository.SaveChanges();
+                var random = new Random();
+                var randomNumber = random.Next(1, 100);
+                var pay = new PaymentModel
+                {
+                    PaymentCode = randomNumber.ToString(),
+                    PaymentMethod = "Thanh toán Vnpay",
+                    transactionId = randomNumber.ToString(),
+                    status = "Đã thanh toán"
+                };
+                await _paymentRepository.AddAsync(pay);
+                await _paymentRepository.SaveChanges();
+                var orderPayment = new OrderPaymentModel
+                {
+
+                    OrderId = data.Id,
+                    PaymentId = pay.Id,
+                };
+                await _paymentOrderRepository.AddAsync(orderPayment);
+                await _paymentRepository.SaveChanges();
                 return "đã thanh toán";
             }
             else
